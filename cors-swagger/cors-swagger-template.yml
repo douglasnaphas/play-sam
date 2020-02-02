@@ -1,0 +1,41 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+
+Globals:
+  Api:
+    BinaryMediaTypes:
+      # These are equivalent to image/gif and image/png when deployed
+      - image~1png
+
+Resources:
+  MyApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: dev
+      Variables:
+        VarName: varValue
+      Cors:
+        AllowOrigin: "'*''"
+        AllowMethods: "'GET'"
+        AllowHeaders: "'origin, x-requested-with'"
+        MaxAge: "'510'"
+      DefinitionBody:
+        swagger: "2.0"
+        info:
+          title: "my-title"
+        paths:
+          "/echobase64eventbody":
+            post:
+              x-amazon-apigateway-integration:
+                httpMethod: POST
+                type: aws_proxy
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${EchoBase64EventBodyFunction.Arn}/invocations
+
+  EchoBase64EventBodyFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: main.echo_base64_event_body
+      Runtime: python3.6
+      CodeUri: .
+      Timeout: 600
