@@ -1,0 +1,23 @@
+{
+  "name": "play-sam",
+  "version": "1.0.0",
+  "description": "Experiment with the AWS serverless application model",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/douglasnaphas/play-sam.git"
+  },
+  "author": "Douglas Naphas <douglasnaphas@gmail.com>",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/douglasnaphas/play-sam/issues"
+  },
+  "homepage": "https://github.com/douglasnaphas/play-sam#readme",
+  "dependencies": {
+    "aws-serverless-express": "^3.3.6",
+    "express": "^4.17.1"
+  }
+}
