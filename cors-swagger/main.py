@@ -13,6 +13,6 @@ def echo_base64_event_body(event, context):
     return {
         "statusCode": 200,
         "body": event["body"],
-        "headers": {"Content-Type": event["headers"]["Content-Type"]},
+        "headers": {"Content-Type": event["headers"]["content-type"]},
         "isBase64Encoded": event["isBase64Encoded"],
     }
