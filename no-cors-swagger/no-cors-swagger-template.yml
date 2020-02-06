@@ -14,16 +14,18 @@ Resources:
       StageName: dev
       Variables:
         VarName: varValue
-      Cors:
-        AllowOrigin: "'*''"
-        AllowMethods: "'GET'"
-        AllowHeaders: "'origin, x-requested-with'"
-        MaxAge: "'510'"
       DefinitionBody:
         swagger: "2.0"
         info:
           title: "my-title"
         paths:
+          "/handleoptions":
+            options:
+              x-amazon-apigateway-integration:
+                httpMethod: OPTIONS
+                type: aws_proxy
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${HandleOptionsFunction.Arn}/invocations
           "/echobase64eventbody":
             post:
               x-amazon-apigateway-integration:
@@ -39,12 +41,27 @@ Resources:
       Runtime: python3.6
       CodeUri: .
       Timeout: 600
-      
+
+  HandleOptionsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: main.handle_options
+      Runtime: python3.6
+      CodeUri: .
+      Timeout: 600
+
   LambdaEndpointGetInvokePermission:
     Type: AWS::Lambda::Permission
     Properties:
       FunctionName: !Ref EchoBase64EventBodyFunction
-      Action: 'lambda:InvokeFunction'
+      Action: "lambda:InvokeFunction"
       Principal: apigateway.amazonaws.com
-      SourceArn: !Sub 'arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${MyApi}/*/POST/echobase64eventbody'
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${MyApi}/*/POST/echobase64eventbody"
 
+  LambdaOptionsEndpointGetInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref HandleOptionsFunction
+      Action: "lambda:InvokeFunction"
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${MyApi}/*/OPTIONS/handleoptions"
